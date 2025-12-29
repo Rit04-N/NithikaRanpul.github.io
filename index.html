@@ -3,144 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday, Dasini!</title>
+    <title>For Dasini</title>
     <style>
-        body { margin: 0; background: #0a0a0a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; overflow-x: hidden; }
-        
-        /* The Hero Section */
+        /* --- THE PINK PALETTE --- */
+        :root {
+            --bg-dark: #1a050a;       /* Very dark wine/black */
+            --bg-card: #2b0a16;       /* Slightly lighter for cards */
+            --primary-pink: #ff4d6d;  /* Hot Pink */
+            --soft-pink: #ffb3c1;     /* Pastel Pink */
+            --text-main: #fff0f3;     /* White-ish pink */
+            --accent-gold: #ffcc00;   /* For the game score */
+        }
+
+        body { 
+            margin: 0; 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            overflow-x: hidden; 
+        }
+
+        /* --- HERO SECTION --- */
         .hero { 
-            height: 100vh; 
+            min-height: 90vh; 
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
             align-items: center; 
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                        url('https://images.unsplash.com/photo-1467810563316-b5476525c0f9?q=80&w=2069'); 
+            background: linear-gradient(to bottom, rgba(26,5,10,0.8), var(--bg-dark)), 
+                        url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000'); 
             background-size: cover;
             background-position: center;
         }
 
-        h1 { font-size: 3rem; margin: 0; color: #ff4d6d; text-shadow: 2px 2px 15px rgba(255, 77, 109, 0.5); padding: 0 20px; }
-        .subtext { font-size: 1.2rem; margin-top: 10px; opacity: 0.9; }
+        h1 { 
+            font-size: 3.5rem; 
+            margin: 0; 
+            background: -webkit-linear-gradient(45deg, var(--soft-pink), var(--primary-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 0px 20px rgba(255, 77, 109, 0.3);
+            padding: 0 15px;
+        }
 
-        /* The Countdown Box */
         .countdown { 
-            margin-top: 30px;
-            font-size: 1.3rem; 
-            letter-spacing: 2px; 
-            border: 2px solid #ff4d6d; 
-            padding: 15px 30px; 
+            margin-top: 20px;
+            font-size: 1.5rem; 
+            border: 2px solid var(--primary-pink); 
+            padding: 10px 30px; 
             border-radius: 50px;
             background: rgba(255, 77, 109, 0.1);
-            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px rgba(255, 77, 109, 0.4);
         }
 
-        /* Content Sections */
-        .section { padding: 80px 20px; max-width: 800px; margin: auto; }
-        .love-note { font-style: italic; font-size: 1.2rem; line-height: 1.8; color: #ffb3c1; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; }
-
-        /* Photos */
-        .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px; }
-        .photo-grid img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.4s; }
-        .photo-grid img:hover { transform: translateY(-10px) scale(1.05); }
-
-        /* Floating Hearts Styling */
-        .heart { 
-            position: fixed; 
-            bottom: -100px; 
-            color: #ff4d6d; 
-            font-size: 20px;
-            user-select: none;
-            pointer-events: none; /* Allows her to click things through the hearts */
-            z-index: 9999; /* Ensures hearts stay on TOP */
-            animation: float Up 6s linear forwards;
+        /* --- THE GAME SECTION --- */
+        .game-container {
+            margin: 50px auto;
+            max-width: 600px;
+            padding: 20px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--primary-pink);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        canvas {
+            background: #000;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 500px;
+            touch-action: none; /* Prevents scrolling while tapping game */
+        }
+        .game-instructions { font-size: 0.9rem; color: var(--soft-pink); margin-top: 10px; }
+        .play-btn {
+            background: var(--primary-pink);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
         }
 
-        @keyframes floatUp {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        /* --- STORY & TEXT SECTIONS --- */
+        .section { padding: 60px 20px; max-width: 800px; margin: auto; }
+        
+        .text-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            border-left: 4px solid var(--primary-pink);
         }
 
-        footer { padding: 60px 20px; opacity: 0.5; font-size: 0.9rem; }
+        h2 { color: var(--soft-pink); border-bottom: 1px solid var(--primary-pink); display: inline-block; padding-bottom: 10px; }
+        p { line-height: 1.8; font-size: 1.1rem; color: #ffdee6; }
 
-        @media (max-width: 600px) {
-            h1 { font-size: 2.2rem; }
-            .photo-grid { grid-template-columns: 1fr; }
+        /* --- PHOTO GALLERY --- */
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
+        .photo-grid img { 
+            width: 100%; 
+            height: 300px; 
+            object-fit: cover; 
+            border-radius: 15px; 
+            transition: 0.4s; 
+            border: 1px solid rgba(255, 77, 109, 0.3);
         }
+        .photo-grid img:hover { transform: scale(1.03); border-color: var(--primary-pink); }
+
+        /* --- ANIMATIONS --- */
+        .heart { position: fixed; color: var(--primary-pink); pointer-events: none; z-index: 9999; animation: floatUp 6s linear forwards; }
+        @keyframes floatUp { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
+        
+        footer { padding: 50px; opacity: 0.6; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
     <div class="hero">
-        <h1>Happy Birthday, Dasini Mewansa!</h1>
-        <p class="subtext">2025: Your Year to Shine ✨</p>
-        <div class="countdown" id="timer">Loading Birthday Magic...</div>
+        <h1>Happy Birthday, Dasini!</h1>
+        <p>A space on the internet that stays forever, just like us.</p>
+        <div class="countdown" id="timer">Calculating...</div>
     </div>
 
     <div class="section">
-        <h2>To My Favorite Person</h2>
-        <p class="love-note">
-            "Even though we are miles apart on this Jan 1st, I wanted you to have a space 
-            on the internet that belongs only to you. You are the best thing that happened to me in 2024, 
-            and I can't wait to make more memories with you in 2025."
-        </p>
-    </div>
-
-    <div class="section">
-        <h2>Our Moments</h2>
-        <div class="photo-grid">
-            <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000" alt="Memory 1">
-            <img src="https://images.unsplash.com/photo-1516589174184-c68526674fd6?q=80&w=1000" alt="Memory 2">
+        <h2>Mini Game: Run for Love</h2>
+        <div class="game-container">
+            <canvas id="gameCanvas" width="600" height="200"></canvas>
+            <div class="game-instructions">Tap screen or Press Space to Jump over the obstacles!</div>
+            <button class="play-btn" onclick="startGame()">Start / Restart Game</button>
+            <p id="scoreDisplay">Score: 0</p>
         </div>
     </div>
 
-    <footer>Made with ❤️ by Nithika Ranpul | 2025</footer>
+    <div class="section">
+        <h2>Chapters of Us</h2>
+        
+        <div class="text-card">
+            <h3>❤️ The Beginning</h3>
+            <p>
+                Do you remember how we started? Looking back at 2025, I realize how much you've changed my life.
+                This website isn't just for today, it's a reminder you can visit whenever you miss me.
+            </p>
+        </div>
+
+        <div class="text-card">
+            <h3>💌 My Wish for You</h3>
+            <p>
+                For this year, I wish you nothing but happiness and success. No matter how hard things get,
+                remember that you have me cheering for you in your corner, always.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Our Memories</h2>
+        <div class="photo-grid">
+            <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=1000" alt="Us 1">
+            <img src="https://images.unsplash.com/photo-1516589174184-c68526674fd6?q=80&w=1000" alt="Us 2">
+            <img src="https://images.unsplash.com/photo-1621600411688-4be93cd68504?q=80&w=1000" alt="Us 3">
+        </div>
+    </div>
+
+    <footer>
+        Made with ❤️ by Nithika Ranpul<br>
+        Forever & Always
+    </footer>
 
     <script>
-        // 1. COUNTDOWN SCRIPT
-        // Set this to Jan 1st 2025 at Midnight
-        const birthdayDate = new Date("January 1, 2025 00:00:00").getTime();
+        // --- 1. COUNTDOWN LOGIC ---
+        // Setting target to Jan 1, 2026 (Since current date is Dec 2025)
+        const targetDate = new Date("January 1, 2026 00:00:00").getTime();
 
-        const timer = setInterval(function() {
+        setInterval(() => {
             const now = new Date().getTime();
-            const distance = birthdayDate - now;
+            const diff = targetDate - now;
 
-            if (distance < 0) {
-                document.getElementById("timer").innerHTML = "HAPPY BIRTHDAY & HAPPY NEW YEAR! 🥳";
-                clearInterval(timer);
-                return;
+            if (diff < 0) {
+                // If birthday passed, show "Happy Birthday" or "Day 1 of 365"
+                document.getElementById("timer").innerHTML = "HAPPY BIRTHDAY DASINI! 💖";
+            } else {
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                document.getElementById("timer").innerHTML = `Countdown: ${d}d ${h}h ${m}m`;
             }
-
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("timer").innerHTML = `Surprise Starts in: ${hours}h ${minutes}m ${seconds}s`;
         }, 1000);
 
-        // 2. HEART GENERATOR SCRIPT
+        // --- 2. FLOATING HEARTS LOGIC ---
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
-            
-            // Randomly choose between a heart and a sparkle for New Year
-            const icons = ['❤️', '💖', '✨', '🌸'];
-            heart.innerHTML = icons[Math.floor(Math.random() * icons.length)];
-            
+            heart.innerHTML = ['❤️','💖','🌸','✨'][Math.floor(Math.random()*4)];
             heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
-            heart.style.animationDuration = Math.random() * 3 + 3 + 's'; // 3-6 seconds
-            
+            heart.style.fontSize = Math.random() * 20 + 15 + 'px';
+            heart.style.animationDuration = Math.random() * 3 + 4 + 's';
             document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 7000);
+        }
+        setInterval(createHeart, 500);
 
-            // Remove heart after animation finishes to keep the site fast
-            setTimeout(() => {
-                heart.remove();
-            }, 6000);
+        // --- 3. THE "LOVE RUNNER" GAME ---
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        let gameRunning = false;
+        let score = 0;
+        
+        // Game Objects
+        let dino = { x: 50, y: 150, width: 30, height: 30, dy: 0, jumpPower: -12, gravity: 0.8, grounded: true };
+        let obstacles = [];
+        let frame = 0;
+
+        function drawDino() {
+            ctx.fillStyle = "#ff4d6d"; // Pink Player
+            // Drawing a Heart shape instead of a square
+            ctx.font = "30px Arial";
+            ctx.fillText("❤️", dino.x, dino.y + 30);
         }
 
-        // Start creating hearts every 400ms
-        setInterval(createHeart, 400);
+        function drawObstacles() {
+            ctx.fillStyle = "#ffb3c1"; // Obstacle Color
+            obstacles.forEach(obs => {
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+            });
+        }
+
+        function updateGame() {
+            if (!gameRunning) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dino Physics
+            dino.dy += dino.gravity;
+            dino.y += dino.dy;
+            if (dino.y > 150) { dino.y = 150; dino.dy = 0; dino.grounded = true; }
+
+            // Spawn Obstacles
+            if (frame % 100 === 0) {
+                obstacles.push({ x: canvas.width, y: 160, width: 20, height: 20 });
+            }
+
+            // Move Obstacles
+            obstacles.forEach((obs, index) => {
+                obs.x -= 4; // Speed
+                if (obs.x + obs.width < 0) obstacles.splice(index, 1);
+
+                // Collision Detection
+                if (dino.x < obs.x + obs.width &&
+                    dino.x + 30 > obs.x &&
+                    dino.y + 30 > obs.y) {
+                    gameRunning = false;
+                    alert("Game Over! You collected " + score + " love points! Try again?");
+                }
+            });
+
+            drawDino();
+            drawObstacles();
+
+            score++;
+            document.getElementById("scoreDisplay").innerText = "Love Score: " + Math.floor(score/10);
+            frame++;
+            requestAnimationFrame(updateGame);
+        }
+
+        function jump() {
+            if (dino.grounded) {
+                dino.dy = dino.jumpPower;
+                dino.grounded = false;
+            }
+        }
+
+        function startGame() {
+            if (gameRunning) return;
+            dino.y = 150;
+            obstacles = [];
+            score = 0;
+            frame = 0;
+            gameRunning = true;
+            updateGame();
+        }
+
+        // Controls
+        document.addEventListener("keydown", (e) => { if (e.code === "Space") jump(); });
+        canvas.addEventListener("touchstart", (e) => { 
+            e.preventDefault(); // Stop scrolling
+            jump(); 
+        });
     </script>
 </body>
 </html>
