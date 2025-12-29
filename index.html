@@ -56,6 +56,7 @@
             border-radius: 50px;
             background: rgba(255, 77, 109, 0.1);
             box-shadow: 0 0 15px rgba(255, 77, 109, 0.4);
+            transition: all 0.5s ease;
         }
 
         /* --- THE GAME SECTION --- */
@@ -135,17 +136,18 @@
         }
         input:focus, textarea:focus { outline: none; box-shadow: 0 0 10px var(--primary-pink); }
         
-        /* --- ANIMATIONS (Standard Background) --- */
-        .heart { position: fixed; color: var(--primary-pink); pointer-events: none; z-index: 1; animation: floatUp linear forwards; opacity: 0.7; }
-        @keyframes floatUp { 0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 20% { opacity: 0.8; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
+        /* --- ANIMATIONS --- */
+        /* Gentle background sparkles */
+        .heart { position: fixed; color: var(--primary-pink); pointer-events: none; z-index: 1; animation: floatUp linear forwards; opacity: 0.6; }
+        @keyframes floatUp { 0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 20% { opacity: 0.6; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
         
-        /* --- SNOWING STAR ANIMATION --- */
+        /* Snowing Stars (Top Layer) */
         .snow-star { 
             position: fixed; 
             top: -10px; 
             color: white; 
             pointer-events: none; 
-            z-index: 9999; /* On top of everything */
+            z-index: 9999; 
             animation: fallDown linear forwards; 
         }
         @keyframes fallDown {
@@ -159,7 +161,7 @@
 <body>
 
     <div class="hero">
-        <h1>Happy Birthday, Dasini!</h1>
+        <h1 id="mainTitle">Happy Birthday, Dasini!</h1>
         <p>A space on the internet that stays forever, just like us.</p>
         <div class="countdown" id="timer">Calculating...</div>
     </div>
@@ -201,20 +203,17 @@
                 No matter how hard things get, remember that you have me cheering for you always.
             </p>
         </div>
-        
     </div>
 
     <div class="section">
         <h2>Send Me a Note</h2>
         <div class="chat-box">
             <p>Write something here, and it will be sent directly to my email.(There is no spaces so use the undersocre fo spaces)</p>
-            
             <form action="https://formspree.io/f/xqekwlbr" method="POST">
                 <input type="text" name="name" placeholder="Your Name" required>
                 <textarea name="message" rows="5" placeholder="Write a message to me..." required></textarea>
                 <button type="submit" class="btn">Send Message 💌</button>
             </form>
-
         </div>
     </div>
 
@@ -229,57 +228,99 @@
     <footer>Made with ❤️ by Nithika Ranpul</footer>
 
     <script>
-        // --- COUNTDOWN ---
-        const targetDate = new Date("January 1, 2026 00:00:00").getTime();
-        setInterval(() => {
+        // --- DATES CONFIGURATION ---
+        const jan01 = new Date("January 1, 2026 00:00:00").getTime(); 
+        const jan02 = new Date("January 2, 2026 00:00:00").getTime();
+        
+        // --- 1. DYNAMIC TEXT LOGIC (Timer/Titles) ---
+        const timerInterval = setInterval(() => {
             const now = new Date().getTime();
-            const diff = targetDate - now;
-            if (diff < 0) {
-                document.getElementById("timer").innerHTML = "HAPPY BIRTHDAY DASINI! 💖";
-            } else {
+            
+            // LOGIC: AFTER JAN 02 (The "Forever" Mode)
+            if (now >= jan02) {
+                document.getElementById("mainTitle").innerHTML = "To my love, Dasini";
+                document.getElementById("timer").innerHTML = "Forever & Always 🌹";
+                document.getElementById("timer").style.borderColor = "var(--primary-pink)";
+            }
+            // LOGIC: ON BIRTHDAY (JAN 01)
+            else if (now >= jan01) {
+                document.getElementById("mainTitle").innerHTML = "Happy Birthday, Dasini!";
+                document.getElementById("timer").innerHTML = "HAPPY BIRTHDAY! 💖";
+                document.getElementById("timer").style.borderColor = "#fff"; 
+                document.getElementById("timer").style.boxShadow = "0 0 20px rgba(255,255,255,0.5)";
+                document.getElementById("timer").style.background = "rgba(255, 77, 109, 0.4)";
+            }
+            // LOGIC: BEFORE BIRTHDAY (Countdown)
+            else {
+                document.getElementById("mainTitle").innerHTML = "Happy Birthday, Dasini!";
+                const diff = jan01 - now;
                 const d = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 document.getElementById("timer").innerHTML = `Next Celebration: ${d}d ${h}h`;
             }
         }, 1000);
 
-        // --- BACKGROUND SPARKLES LOGIC (Standard) ---
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.innerHTML = ['✨','✨','✨','⭐','💖'][Math.floor(Math.random()*5)];
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.fontSize = Math.random() * 15 + 8 + 'px';
-            heart.style.animationDuration = Math.random() * 7 + 8 + 's';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 15000);
-        }
-        setInterval(createHeart, 500);
-        
-        // --- NEW: SNOWING STARS INTRO (First 10 Seconds) ---
+
+        // --- 2. SNOWING STARS (THE INTRO - Every Day) ---
+        // Requirement: Always there, but stops after 20 seconds.
         function createSnowStar() {
             const star = document.createElement('div');
             star.classList.add('snow-star');
-            star.innerHTML = ['✨', '⭐', '❄️'][Math.floor(Math.random() * 3)]; // Mix of stars/snow
-            star.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
-            star.style.fontSize = Math.random() * 20 + 10 + 'px'; // Random size
-            star.style.animationDuration = Math.random() * 3 + 2 + 's'; // Fast fall speed (2-5s)
+            star.innerHTML = ['✨', '⭐', '❄️'][Math.floor(Math.random() * 3)];
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.fontSize = Math.random() * 20 + 10 + 'px';
+            star.style.animationDuration = Math.random() * 3 + 2 + 's'; 
             document.body.appendChild(star);
-            
-            // Remove after animation ends
             setTimeout(() => star.remove(), 5000);
         }
 
-        // Start the snow effect immediately
-        let snowInterval = setInterval(createSnowStar, 100); // Create a star every 100ms (Heavy snow)
-
-        // Stop the snow effect after 10 seconds (10000ms)
-        setTimeout(() => {
-            clearInterval(snowInterval);
-        }, 10000);
+        // Start snow immediately
+        let snowInterval = setInterval(createSnowStar, 100);
+        
+        // STOP snow after 20 seconds (Requirement Match)
+        setTimeout(() => { clearInterval(snowInterval); }, 20000);
 
 
-        // --- HEART BURST (For Game) ---
+        // --- 3. BACKGROUND SPARKLES ---
+        function createSparkle(type) {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            
+            if (type === 'heavy') {
+                // Birthday Sparkles (Jan 01 Only)
+                // LIGHTER DENSITY so text is readable
+                heart.innerHTML = ['✨','💖','🌸'][Math.floor(Math.random()*3)];
+                heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+                heart.style.animationDuration = Math.random() * 4 + 3 + 's';
+                heart.style.opacity = "0.7"; // More transparent
+            } else {
+                // Normal Background (Always there)
+                heart.innerHTML = ['✨','⭐','✨'][Math.floor(Math.random()*3)];
+                heart.style.fontSize = Math.random() * 10 + 5 + 'px'; // Smaller
+                heart.style.animationDuration = Math.random() * 10 + 10 + 's'; // Very slow
+                heart.style.opacity = "0.4"; // Very subtle
+            }
+            
+            heart.style.left = Math.random() * 100 + 'vw';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 15000);
+        }
+
+        // Always run gentle sparkles
+        setInterval(() => createSparkle('gentle'), 800);
+
+        // CHECK FOR BIRTHDAY SPARKLES (Jan 01 ONLY)
+        const nowCheck = new Date().getTime();
+        if (nowCheck >= jan01 && nowCheck < jan02) {
+            // It is Jan 01! Run heavy sparkles
+            let birthdayInterval = setInterval(() => createSparkle('heavy'), 300); // Spawns every 300ms (Not too heavy)
+            
+            // Stop heavy sparkles after 10 seconds (Requirement Match)
+            setTimeout(() => { clearInterval(birthdayInterval); }, 10000);
+        }
+
+
+        // --- 4. HEART BURST (For Game) ---
         function heartBurst() { 
             for(let i=0; i<20; i++) {
                 const burst = document.createElement('div');
@@ -294,7 +335,7 @@
             }
         }
 
-        // --- GAME LOGIC (BUNNY RUNNER) ---
+        // --- 5. GAME LOGIC (FIXED SCORING) ---
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         let gameRunning = false, isPaused = false, score = 0, animationId;
@@ -316,20 +357,39 @@
 
             ctx.font = "40px Arial"; ctx.fillText("🐰", player.x, player.y + 40);
             
+            // LOOP BACKWARDS TO FIX SCORING BUG
             ctx.font = "30px Arial";
-            obstacles.forEach((obs, i) => { 
-                obs.x -= 5; ctx.fillText("🌵", obs.x, obs.y + 30);
-                if (obs.x + obs.width < 0) obstacles.splice(i, 1);
-                if (player.x < obs.x + obs.width && player.x + 30 > obs.x && player.y + 30 > obs.y) gameOver();
-            });
-
-            hearts.forEach((h, i) => { 
-                h.x -= 5; ctx.fillText("💖", h.x, h.y + 30);
-                if (h.x + h.width < 0) hearts.splice(i, 1);
-                if (player.x < h.x + h.width && player.x + 30 > h.x && player.y + 30 > h.y) {
-                    hearts.splice(i, 1); score += 10; document.getElementById("scoreDisplay").innerText = "Love Collected: " + score;
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                let obs = obstacles[i];
+                obs.x -= 5;
+                ctx.fillText("🌵", obs.x, obs.y + 30);
+                
+                // Collision
+                if (player.x < obs.x + obs.width && player.x + 30 > obs.x && player.y + 30 > obs.y) {
+                    gameOver();
                 }
-            });
+                // Remove if off screen
+                if (obs.x + obs.width < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+
+            for (let i = hearts.length - 1; i >= 0; i--) {
+                let h = hearts[i];
+                h.x -= 5; 
+                ctx.fillText("💖", h.x, h.y + 30);
+                
+                // CHECK COLLISION (Collect Heart)
+                if (player.x < h.x + h.width && player.x + 30 > h.x && player.y + 30 > h.y) {
+                    hearts.splice(i, 1); // Remove heart
+                    score += 1; // FIX: Add 1 point
+                    document.getElementById("scoreDisplay").innerText = "Love Collected: " + score;
+                } 
+                // Remove if off screen (Missed Heart)
+                else if (h.x + h.width < 0) {
+                    hearts.splice(i, 1);
+                }
+            }
 
             frame++; animationId = requestAnimationFrame(updateGame);
         }
