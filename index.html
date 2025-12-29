@@ -35,7 +35,7 @@
                         url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000'); 
             background-size: cover;
             background-position: center;
-            position: relative; z-index: 2; /* Ensures text is above sparkles */
+            position: relative; z-index: 2; 
         }
 
         h1 { 
@@ -91,7 +91,6 @@
         /* --- BLOG / CHAT SECTIONS --- */
         .section { padding: 60px 20px; max-width: 800px; margin: auto; position: relative; z-index: 2; }
         
-        /* Blog Post Styling */
         .blog-post {
             background: rgba(255, 255, 255, 0.05);
             padding: 30px;
@@ -100,7 +99,7 @@
             text-align: left;
             border-left: 4px solid var(--primary-pink);
             position: relative;
-            backdrop-filter: blur(5px); /* Makes text readable over sparkles */
+            backdrop-filter: blur(5px);
         }
         .blog-date {
             position: absolute;
@@ -116,7 +115,7 @@
         h3 { color: white; margin-top: 0; }
         p { line-height: 1.8; font-size: 1.1rem; color: #ffdee6; }
 
-        /* Chat Box Styling */
+        /* Chat Box */
         .chat-box {
             background: var(--bg-card);
             padding: 30px;
@@ -136,11 +135,24 @@
         }
         input:focus, textarea:focus { outline: none; box-shadow: 0 0 10px var(--primary-pink); }
         
-        /* --- SPARKLE ANIMATIONS --- */
-        /* Changed z-index to 1 so they sit behind the main text blocks but in front of the very back */
+        /* --- ANIMATIONS (Standard Background) --- */
         .heart { position: fixed; color: var(--primary-pink); pointer-events: none; z-index: 1; animation: floatUp linear forwards; opacity: 0.7; }
         @keyframes floatUp { 0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 20% { opacity: 0.8; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
         
+        /* --- SNOWING STAR ANIMATION --- */
+        .snow-star { 
+            position: fixed; 
+            top: -10px; 
+            color: white; 
+            pointer-events: none; 
+            z-index: 9999; /* On top of everything */
+            animation: fallDown linear forwards; 
+        }
+        @keyframes fallDown {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
         footer { padding: 50px; opacity: 0.6; font-size: 0.9rem; position: relative; z-index: 2;}
     </style>
 </head>
@@ -231,24 +243,43 @@
             }
         }, 1000);
 
-        // --- BACKGROUND SPARKLES LOGIC (UPDATED) ---
+        // --- BACKGROUND SPARKLES LOGIC (Standard) ---
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
-            // UPDATED MIX: Mostly sparkles ✨ and stars ⭐, fewer hearts
             heart.innerHTML = ['✨','✨','✨','⭐','💖'][Math.floor(Math.random()*5)];
             heart.style.left = Math.random() * 100 + 'vw';
-            // SMALLER SIZE for background feel
             heart.style.fontSize = Math.random() * 15 + 8 + 'px';
-            // SLOWER SPEED (8 to 15 seconds to float up)
             heart.style.animationDuration = Math.random() * 7 + 8 + 's';
             document.body.appendChild(heart);
             setTimeout(() => heart.remove(), 15000);
         }
-        // Spawn frequency
         setInterval(createHeart, 500);
         
-        // Burst function for game events (Faster sparkles)
+        // --- NEW: SNOWING STARS INTRO (First 10 Seconds) ---
+        function createSnowStar() {
+            const star = document.createElement('div');
+            star.classList.add('snow-star');
+            star.innerHTML = ['✨', '⭐', '❄️'][Math.floor(Math.random() * 3)]; // Mix of stars/snow
+            star.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
+            star.style.fontSize = Math.random() * 20 + 10 + 'px'; // Random size
+            star.style.animationDuration = Math.random() * 3 + 2 + 's'; // Fast fall speed (2-5s)
+            document.body.appendChild(star);
+            
+            // Remove after animation ends
+            setTimeout(() => star.remove(), 5000);
+        }
+
+        // Start the snow effect immediately
+        let snowInterval = setInterval(createSnowStar, 100); // Create a star every 100ms (Heavy snow)
+
+        // Stop the snow effect after 10 seconds (10000ms)
+        setTimeout(() => {
+            clearInterval(snowInterval);
+        }, 10000);
+
+
+        // --- HEART BURST (For Game) ---
         function heartBurst() { 
             for(let i=0; i<20; i++) {
                 const burst = document.createElement('div');
@@ -256,8 +287,8 @@
                 burst.innerHTML = ['✨','💖'][Math.floor(Math.random()*2)];
                 burst.style.left = Math.random() * 100 + 'vw';
                 burst.style.fontSize = Math.random() * 20 + 15 + 'px';
-                burst.style.animationDuration = Math.random() * 2 + 3 + 's'; // Faster burst
-                burst.style.zIndex = "9999"; // Burst goes on top
+                burst.style.animationDuration = Math.random() * 2 + 3 + 's';
+                burst.style.zIndex = "9999";
                 document.body.appendChild(burst);
                 setTimeout(() => burst.remove(), 5000);
             }
