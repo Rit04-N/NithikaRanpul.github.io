@@ -206,7 +206,7 @@
     <div class="section">
         <h2>Send Me a Note</h2>
         <div class="chat-box">
-            <p>Write something here, and it will be sent directly to my email.(There is no spaces so use the undersocre fo spaces)</p>
+            <p>Write something here, and it will be sent directly to my email.(There is no spaces so use the undersocre for spaces)</p>
             <form action="https://formspree.io/f/xqekwlbr" method="POST">
                 <input type="text" name="name" placeholder="Your Name" required>
                 <textarea name="message" rows="5" placeholder="Write a message to me..." required></textarea>
@@ -266,10 +266,9 @@
             document.body.appendChild(star);
             setTimeout(() => star.remove(), 5000);
         }
-
-        // Run snow intro every time, stop after 20s
+        // Run snow intro every time, stop after 10s
         let snowInterval = setInterval(createSnowStar, 100);
-        setTimeout(() => { clearInterval(snowInterval); }, 20000);
+        setTimeout(() => { clearInterval(snowInterval); }, 10000);
 
         // --- 3. BACKGROUND SPARKLES ---
         function createSparkle(type) {
@@ -296,7 +295,9 @@
         }
 
         // Always run gentle sparkles
-        setInterval(() => createSparkle('gentle'), 800);
+        let gentleSparkle = setInterval(() => createSparkle('gentle'), 800);
+        // Stop gentle sparkles after 20 seconds (Requirement Match)
+        setTimeout(() => { clearInterval(gentleSparkle); }, 20000);
 
         // Run heavy sparkles only on Jan 01, stop after 10s
         const nowCheck = new Date().getTime();
@@ -320,7 +321,7 @@
             }
         }
 
-        // --- 5. GAME LOGIC (FIXED SCORING) ---
+        // --- 5. GAME LOGIC (STRICT HITBOX) ---
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         let gameRunning = false, isPaused = false, score = 0, animationId;
@@ -332,51 +333,56 @@
             if (!gameRunning || isPaused) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
+            // Physics
             player.dy += player.gravity; player.y += player.dy;
             if (player.y > GROUND_Y) { player.y = GROUND_Y; player.dy = 0; player.grounded = true; player.jumpCount = 0; }
             
+            // Spawning
             if (frame % 90 === 0) {
                 if (Math.random() < 0.3) obstacles.push({ x: canvas.width, y: GROUND_Y + 10, width: 20, height: 30 });
                 else hearts.push({ x: canvas.width, y: [GROUND_Y + 10, 140, 60][Math.floor(Math.random()*3)], width: 30, height: 30 });
             }
 
+            // Draw Player
             ctx.font = "40px Arial"; ctx.fillText("🐰", player.x, player.y + 40);
             
-            // OBSTACLE LOOP
+            // Helper for Collision (With Padding for Fairness)
+            function isColliding(p, r) {
+                let padding = 10; // Hitbox is smaller than the emoji to prevent cheap hits
+                return (
+                    p.x + padding < r.x + r.width - padding &&
+                    p.x + p.width - padding > r.x + padding &&
+                    p.y + padding < r.y + r.height - padding &&
+                    p.y + p.height - padding > r.y + padding
+                );
+            }
+
+            // Draw & Check Obstacles
             ctx.font = "30px Arial";
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 let obs = obstacles[i];
                 obs.x -= 5;
                 ctx.fillText("🌵", obs.x, obs.y + 30);
                 
-                // Collision
-                if (player.x < obs.x + obs.width &&
-                    player.x + player.width > obs.x &&
-                    player.y < obs.y + obs.height &&
-                    player.y + player.height > obs.y) {
-                    gameOver();
-                }
+                if (isColliding(player, obs)) gameOver();
                 if (obs.x + obs.width < 0) obstacles.splice(i, 1);
             }
 
-            // HEART LOOP (Fixed scoring & collision)
+            // Draw & Check Hearts
             for (let i = hearts.length - 1; i >= 0; i--) {
                 let h = hearts[i];
                 h.x -= 5; 
                 ctx.fillText("💖", h.x, h.y + 30);
                 
-                // STRICT COLLISION CHECK (Must touch the heart)
-                if (player.x < h.x + h.width &&
-                    player.x + player.width > h.x &&
-                    player.y < h.y + h.height &&
-                    player.y + player.height > h.y) {
-                    
+                // If touched:
+                if (isColliding(player, h)) {
                     hearts.splice(i, 1); // Remove heart
-                    score += 1; // Count 1, 2, 3
+                    score += 1; // Add score
                     document.getElementById("scoreDisplay").innerText = "Love Collected: " + score;
                 } 
+                // If missed (off screen):
                 else if (h.x + h.width < 0) {
-                    hearts.splice(i, 1); // Remove if missed (No score change)
+                    hearts.splice(i, 1); // Just remove, NO score
                 }
             }
 
