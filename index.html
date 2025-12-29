@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <style>
+        body { margin: 0; background: #1a1a1a; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; overflow-x: hidden; }
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1467810563316-b5476525c0f9?q=80&w=2069&auto=format&fit=crop'); background-size: cover; }
+        h1 { font-size: 3.5rem; margin-bottom: 10px; color: #ff4d6d; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .countdown { font-size: 1.5rem; letter-spacing: 2px; border: 1px solid #ff4d6d; padding: 15px; border-radius: 50px; }
+        .section { padding: 80px 20px; max-width: 800px; margin: auto; }
+        .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+        .photo-grid img { width: 100%; border-radius: 10px; filter: grayscale(30%); transition: 0.3s; }
+        .photo-grid img:hover { filter: grayscale(0%); transform: scale(1.02); }
+        .love-note { font-style: italic; font-size: 1.2rem; line-height: 1.6; color: #ffb3c1; }
+        footer { padding: 40px; font-size: 0.8rem; opacity: 0.6; }
+        /* Floating hearts effect */
+        .heart { position: fixed; color: #ff4d6d; animation: float 6s linear infinite; opacity: 0; }
+        @keyframes float { 
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <h1>Happy Birthday, Dasini Mewansa!</h1>
+        <p>A New Year, and a New Beautiful Chapter for You.</p>
+        <div class="countdown" id="timer">Loading 2025...</div>
+    </div>
+
+    <div class="section">
+        <h2>To My Favorite Person</h2>
+        <p class="love-note">
+            "Even though we are miles apart on this Jan 1st, I wanted you to have a space 
+            on the internet that belongs only to you. You are my best discovery of the last year."
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>Our Moments</h2>
+        <div class="photo-grid">
+            <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000" alt="Memory 1">
+            <img src="https://images.unsplash.com/photo-1516589174184-c68526674fd6?q=80&w=1000" alt="Memory 2">
+        </div>
+    </div>
+
+    <footer>Made with ❤️ by Nithika Ranpul | 2025</footer>
+
+    <script>
+        // Countdown to Midnight Jan 1st 2026 (or her birth time)
+        const targetDate = new Date("January 1, 2026 00:00:00").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById("timer").innerHTML = `Next Big Celebration in: ${days}d ${hours}h`;
+        }, 1000);
+
+        // Hearts generator
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+        setInterval(createHeart, 500);
+    </script>
+</body>
+</html>
