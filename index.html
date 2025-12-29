@@ -35,6 +35,7 @@
                         url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000'); 
             background-size: cover;
             background-position: center;
+            position: relative; z-index: 2; /* Ensures text is above sparkles */
         }
 
         h1 { 
@@ -67,6 +68,7 @@
             border: 1px solid var(--primary-pink);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             position: relative;
+            z-index: 2;
         }
         canvas {
             background: linear-gradient(to bottom, #2b0a16, #4a192c); 
@@ -87,7 +89,7 @@
         .game-instructions { font-size: 0.9rem; color: var(--soft-pink); margin-top: 10px; }
 
         /* --- BLOG / CHAT SECTIONS --- */
-        .section { padding: 60px 20px; max-width: 800px; margin: auto; }
+        .section { padding: 60px 20px; max-width: 800px; margin: auto; position: relative; z-index: 2; }
         
         /* Blog Post Styling */
         .blog-post {
@@ -98,6 +100,7 @@
             text-align: left;
             border-left: 4px solid var(--primary-pink);
             position: relative;
+            backdrop-filter: blur(5px); /* Makes text readable over sparkles */
         }
         .blog-date {
             position: absolute;
@@ -119,6 +122,7 @@
             padding: 30px;
             border-radius: 20px;
             border: 1px solid var(--primary-pink);
+            backdrop-filter: blur(5px);
         }
         input, textarea {
             width: 90%;
@@ -132,11 +136,12 @@
         }
         input:focus, textarea:focus { outline: none; box-shadow: 0 0 10px var(--primary-pink); }
         
-        /* --- ANIMATIONS --- */
-        .heart { position: fixed; color: var(--primary-pink); pointer-events: none; z-index: 9999; animation: floatUp 6s linear forwards; }
-        @keyframes floatUp { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
+        /* --- SPARKLE ANIMATIONS --- */
+        /* Changed z-index to 1 so they sit behind the main text blocks but in front of the very back */
+        .heart { position: fixed; color: var(--primary-pink); pointer-events: none; z-index: 1; animation: floatUp linear forwards; opacity: 0.7; }
+        @keyframes floatUp { 0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 20% { opacity: 0.8; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
         
-        footer { padding: 50px; opacity: 0.6; font-size: 0.9rem; }
+        footer { padding: 50px; opacity: 0.6; font-size: 0.9rem; position: relative; z-index: 2;}
     </style>
 </head>
 <body>
@@ -203,7 +208,7 @@
 
     <div class="section">
         <h2>Our Memories</h2>
-        <div class="photo-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        <div class="photo-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; position: relative; z-index: 2;">
             <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=1000" style="width:100%; border-radius:15px;" alt="Us 1">
             <img src="https://images.unsplash.com/photo-1516589174184-c68526674fd6?q=80&w=1000" style="width:100%; border-radius:15px;" alt="Us 2">
         </div>
@@ -226,19 +231,37 @@
             }
         }, 1000);
 
-        // --- HEARTS & SPARKLES ---
+        // --- BACKGROUND SPARKLES LOGIC (UPDATED) ---
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
-            heart.innerHTML = ['❤️','💖','✨','✨','🌸'][Math.floor(Math.random()*5)];
+            // UPDATED MIX: Mostly sparkles ✨ and stars ⭐, fewer hearts
+            heart.innerHTML = ['✨','✨','✨','⭐','💖'][Math.floor(Math.random()*5)];
             heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.fontSize = Math.random() * 20 + 15 + 'px';
-            heart.style.animationDuration = Math.random() * 3 + 4 + 's';
+            // SMALLER SIZE for background feel
+            heart.style.fontSize = Math.random() * 15 + 8 + 'px';
+            // SLOWER SPEED (8 to 15 seconds to float up)
+            heart.style.animationDuration = Math.random() * 7 + 8 + 's';
             document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 7000);
+            setTimeout(() => heart.remove(), 15000);
         }
-        setInterval(createHeart, 600);
-        function heartBurst() { for(let i=0; i<30; i++) setTimeout(createHeart, i * 50); }
+        // Spawn frequency
+        setInterval(createHeart, 500);
+        
+        // Burst function for game events (Faster sparkles)
+        function heartBurst() { 
+            for(let i=0; i<20; i++) {
+                const burst = document.createElement('div');
+                burst.classList.add('heart');
+                burst.innerHTML = ['✨','💖'][Math.floor(Math.random()*2)];
+                burst.style.left = Math.random() * 100 + 'vw';
+                burst.style.fontSize = Math.random() * 20 + 15 + 'px';
+                burst.style.animationDuration = Math.random() * 2 + 3 + 's'; // Faster burst
+                burst.style.zIndex = "9999"; // Burst goes on top
+                document.body.appendChild(burst);
+                setTimeout(() => burst.remove(), 5000);
+            }
+        }
 
         // --- GAME LOGIC (BUNNY RUNNER) ---
         const canvas = document.getElementById("gameCanvas");
@@ -252,31 +275,26 @@
             if (!gameRunning || isPaused) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Player Physics
             player.dy += player.gravity; player.y += player.dy;
             if (player.y > GROUND_Y) { player.y = GROUND_Y; player.dy = 0; player.grounded = true; player.jumpCount = 0; }
             
-            // Spawn Manager
             if (frame % 90 === 0) {
                 if (Math.random() < 0.3) obstacles.push({ x: canvas.width, y: GROUND_Y + 10, width: 20, height: 30 });
                 else hearts.push({ x: canvas.width, y: [GROUND_Y + 10, 140, 60][Math.floor(Math.random()*3)], width: 30, height: 30 });
             }
 
-            // Draw & Collide
             ctx.font = "40px Arial"; ctx.fillText("🐰", player.x, player.y + 40);
             
             ctx.font = "30px Arial";
             obstacles.forEach((obs, i) => { 
                 obs.x -= 5; ctx.fillText("🌵", obs.x, obs.y + 30);
                 if (obs.x + obs.width < 0) obstacles.splice(i, 1);
-                // Game Over Check
                 if (player.x < obs.x + obs.width && player.x + 30 > obs.x && player.y + 30 > obs.y) gameOver();
             });
 
             hearts.forEach((h, i) => { 
                 h.x -= 5; ctx.fillText("💖", h.x, h.y + 30);
                 if (h.x + h.width < 0) hearts.splice(i, 1);
-                // Collect Heart Check
                 if (player.x < h.x + h.width && player.x + 30 > h.x && player.y + 30 > h.y) {
                     hearts.splice(i, 1); score += 10; document.getElementById("scoreDisplay").innerText = "Love Collected: " + score;
                 }
