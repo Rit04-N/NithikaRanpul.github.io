@@ -24,7 +24,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             text-align: center; 
             overflow-x: hidden; 
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; /* Removes blue tap box on mobile */
             user-select: none; 
         }
 
@@ -68,7 +68,7 @@
         .game-container {
             margin: 30px auto;
             max-width: 600px;
-            width: 90%;
+            width: 90%; 
             padding: 15px;
             background: var(--bg-card);
             border-radius: 20px;
@@ -81,14 +81,14 @@
             background: linear-gradient(to bottom, #2b0a16, #4a192c); 
             border-radius: 10px;
             width: 100%;
-            height: auto;
-            touch-action: none;
+            height: auto; 
+            touch-action: none; 
             border-bottom: 4px solid var(--primary-pink); 
         }
         .game-ui { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
         .btn {
             background: var(--primary-pink); border: none; color: white;
-            padding: 12px 25px;
+            padding: 12px 25px; 
             border-radius: 50px; cursor: pointer;
             font-size: 1rem; font-weight: bold; transition: 0.2s;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
@@ -134,7 +134,7 @@
         }
         input, textarea {
             width: 100%;
-            box-sizing: border-box;
+            box-sizing: border-box; 
             padding: 15px;
             margin: 10px 0;
             border-radius: 10px;
@@ -142,7 +142,7 @@
             background: #1a050a;
             color: white;
             font-family: inherit;
-            font-size: 16px;
+            font-size: 16px; 
         }
         input:focus, textarea:focus { outline: none; box-shadow: 0 0 10px var(--primary-pink); }
         
@@ -173,7 +173,7 @@
             .blog-post { padding: 20px; }
             h3 { font-size: 1.1rem; }
             .game-ui { flex-wrap: wrap; }
-            .btn { width: 100%; margin-bottom: 5px; }
+            .btn { width: 100%; margin-bottom: 5px; } 
         }
     </style>
 </head>
@@ -240,19 +240,20 @@
 
     <script>
         // --- 0. SOUND ENGINE (Synthesizer) ---
-        // This creates sounds without needing mp3 files
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
 
+        // This function MUST be called by a button click (User Interaction)
         function initAudio() {
             if (!audioCtx) audioCtx = new AudioContext();
             if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
         function playSound(type) {
-            // Safety check if audio isn't ready
+            // If audio context isn't ready, try to start it
             if (!audioCtx) initAudio();
-            
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
             const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             
@@ -260,7 +261,7 @@
             gainNode.connect(audioCtx.destination);
 
             if (type === 'jump') {
-                // Retro jump sound (Frequency slide up)
+                // Retro jump sound
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(150, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
@@ -270,7 +271,7 @@
                 osc.stop(audioCtx.currentTime + 0.1);
             } 
             else if (type === 'collect') {
-                // Ding sound for heart
+                // Ding sound
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(600, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
@@ -280,7 +281,7 @@
                 osc.stop(audioCtx.currentTime + 0.3);
             }
             else if (type === 'gameover') {
-                // Sad descending sound
+                // Sad sound
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(300, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.5);
@@ -290,7 +291,7 @@
                 osc.stop(audioCtx.currentTime + 0.5);
             }
             else if (type === 'send') {
-                // Nice "sent" chime
+                // Sent chime
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(400, audioCtx.currentTime);
                 osc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 0.1);
@@ -403,6 +404,7 @@
                 else hearts.push({ x: canvas.width, y: [GROUND_Y + 10, 140, 60][Math.floor(Math.random()*3)], width: 30, height: 30 });
             }
 
+            // Draw Player
             ctx.font = "40px Arial"; ctx.fillText("🐰", player.x, player.y + 40);
             
             function isColliding(p, r) {
@@ -415,6 +417,7 @@
                 );
             }
 
+            // Draw Obstacles
             ctx.font = "30px Arial";
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 let obs = obstacles[i];
@@ -422,12 +425,13 @@
                 ctx.fillText("🌵", obs.x, obs.y + 30);
                 
                 if (isColliding(player, obs)) {
-                    playSound('gameover'); // Added sound
+                    playSound('gameover'); // Sound Trigger
                     gameOver();
                 }
                 if (obs.x + obs.width < 0) obstacles.splice(i, 1);
             }
 
+            // Draw Hearts
             for (let i = hearts.length - 1; i >= 0; i--) {
                 let h = hearts[i];
                 h.x -= 5; 
@@ -436,7 +440,7 @@
                 if (isColliding(player, h)) {
                     hearts.splice(i, 1); 
                     score += 1; 
-                    playSound('collect'); // Added sound
+                    playSound('collect'); // Sound Trigger
                     document.getElementById("scoreDisplay").innerText = "Love Collected: " + score;
                 } 
                 else if (h.x + h.width < 0) {
@@ -453,17 +457,17 @@
                 player.dy = player.jumpPower; 
                 player.grounded = false; 
                 player.jumpCount = 1; 
-                playSound('jump'); // Added sound
+                playSound('jump'); // Sound Trigger
             }
             else if (player.jumpCount === 1) { 
                 player.dy = player.doubleJumpPower; 
                 player.jumpCount = 2; 
-                playSound('jump'); // Added sound
+                playSound('jump'); // Sound Trigger
             }
         }
 
         function startGame() {
-            initAudio(); // Wake up audio context
+            initAudio(); // Initialize Audio on Click
             if (gameRunning && !isPaused) return;
             if (isPaused) { isPaused = false; updateGame(); return; }
             player.y = GROUND_Y; obstacles = []; hearts = []; score = 0; frame = 0;
