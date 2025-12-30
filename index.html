@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>For Dasini</title>
+    <title>For Baby Girl</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐰</text></svg>">
 
@@ -192,11 +192,11 @@
             <canvas id="gameCanvas" width="600" height="300"></canvas>
             <div class="game-instructions">
                 Avoid the Cacti 🌵<br>
-                Tap 1x for Low Hearts ❤️ | Tap 2x for High Hearts 💖
+                Tap 1x for Low Hearts 💖 | Tap 2x for High Hearts 💖
             </div>
             <div class="game-ui">
                 <button class="btn" onclick="startGame()">▶ Start / Restart</button>
-                <button class="btn btn-stop" onclick="pauseGame()">⏸ Pause</button>
+                <button class="btn btn-stop" onclick="pauseGame()"> Pause</button>
             </div>
             <h3 id="scoreDisplay" style="margin-right: 0;">Love Collected: 0</h3>
         </div>
@@ -249,19 +249,19 @@
             const now = new Date().getTime();
             
             if (now >= jan02) {
-                document.getElementById("mainTitle").innerHTML = "To my love, Dasini";
+                document.getElementById("mainTitle").innerHTML = "To my love, Baby!";
                 document.getElementById("timer").innerHTML = "Forever & Always 🌹";
                 document.getElementById("timer").style.borderColor = "var(--primary-pink)";
             }
             else if (now >= jan01) {
-                document.getElementById("mainTitle").innerHTML = "Happy Birthday, Dasini!";
+                document.getElementById("mainTitle").innerHTML = "Happy Birthday, Baby!";
                 document.getElementById("timer").innerHTML = "HAPPY BIRTHDAY! 💖";
                 document.getElementById("timer").style.borderColor = "#fff"; 
                 document.getElementById("timer").style.boxShadow = "0 0 20px rgba(255,255,255,0.5)";
                 document.getElementById("timer").style.background = "rgba(255, 77, 109, 0.4)";
             }
             else {
-                document.getElementById("mainTitle").innerHTML = "Happy Birthday, Dasini!";
+                document.getElementById("mainTitle").innerHTML = "Happy Birthday, Baby!";
                 const diff = jan01 - now;
                 const d = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
